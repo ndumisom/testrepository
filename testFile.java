@@ -1,3 +1,40 @@
+    public ResponseEntity<byte[]> getMembershipCorrespondence(
+            @ApiParam(name = "membershipNumber", value = "Membership number", required = true) @PathVariable final String membershipNumber,
+            @ApiParam(name = "documentReference", value = "Document reference", required = true) @PathVariable final String documentReference,
+            @ApiParam(name = "bypassEncryption", value = "bypassEncryption", defaultValue = "false") @RequestParam(required = false) boolean bypassEncryption) {
+
+        if (membershipNumber == null || membershipNumber.trim().equals("")) {
+            throw new ResourceNotFoundException(MessageCodeEnum.DOCUMENT_NOT_FOUND.getCode(),
+                    localeService.getMessage(MessageCodeEnum.DOCUMENT_NOT_FOUND.getCode(),
+                            new Object[]{String.valueOf(membershipNumber)}));
+        }
+
+        if (documentReference == null || documentReference.trim().equals("")) {
+            throw new ResourceNotFoundException(MessageCodeEnum.DOCUMENT_NOT_FOUND.getCode(),
+                    localeService.getMessage(MessageCodeEnum.DOCUMENT_NOT_FOUND.getCode(),
+                            new Object[]{String.valueOf(documentReference)}));
+        }
+        membershipService.validateMembership(membershipNumber);
+
+        za.co.mmiholdings.health.model.DocumentType document = correspondenceService.getCorrespondence(membershipNumber, documentReference, bypassEncryption);
+
+        HttpHeaders headers = new HttpHeaders();
+
+        // Content-Length header.
+        headers.setContentLength(document.getData().length);
+
+        headers.setContentType(MediaType.parseMediaType(document.getMimeType()));
+
+        // Content-Disposition header.
+        headers.setContentDispositionFormData("attachment",
+                String.format("document-%s.%s", documentReference, document.getExtension()));
+
+        return ResponseEntity.ok().headers(headers).body(document.getData());
+    }
+
+
+
+
 //
 // Source code recreated from a .class file by IntelliJ IDEA
 // (powered by FernFlower decompiler)
