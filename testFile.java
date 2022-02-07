@@ -1,3 +1,40 @@
+//
+// Source code recreated from a .class file by IntelliJ IDEA
+// (powered by FernFlower decompiler)
+//
+
+package za.co.mhg.enterprise.common.util.localization;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.stereotype.Service;
+
+@Service
+public class MessageByLocaleServiceImpl implements MessageByLocaleService {
+    @Autowired
+    private MessageSource messageSource;
+
+    public MessageByLocaleServiceImpl() {
+    }
+
+    public String getMessage(String code) {
+        return this.messageSource.getMessage(code, (Object[])null, LocaleContextHolder.getLocale());
+    }
+
+    public String getMessage(String code, Object[] args) {
+        return this.messageSource.getMessage(code, args, LocaleContextHolder.getLocale());
+    }
+
+    public String getMessage(String code, String defaultMessage) {
+        return this.messageSource.getMessage(code, (Object[])null, defaultMessage, LocaleContextHolder.getLocale());
+    }
+}
+
+
+
+
+
 private za.co.mmiholdings.health.model.DocumentType downloadDocumentFromUrl(final String documentReference) {
         GetImageUrlResponse getImageUrlResponse =
                 legacyRepository.processGetImageUrl(new GetImageUrlRequest(documentReference));
